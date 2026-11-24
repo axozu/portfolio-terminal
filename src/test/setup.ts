@@ -6,6 +6,7 @@ import { server } from './mockApi';
 
 // В jsdom нет canvas: Lightweight Charts заменяется доступной заглушкой с той же разметкой.
 vi.mock('@/shared/ui/charts/TimeSeriesChart', () => import('./mocks/TimeSeriesChart'));
+vi.mock('@/shared/ui/charts/CandleChart', () => import('./mocks/CandleChart'));
 
 // Recharts и Radix ждут ResizeObserver, которого в jsdom нет.
 class ResizeObserverStub {

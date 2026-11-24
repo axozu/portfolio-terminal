@@ -108,6 +108,69 @@ export const en = {
       empty: 'No transactions yet. Add your first one.',
     },
   },
+  positions: {
+    search: 'Search positions',
+    searchPlaceholder: 'Ticker or name',
+    classFilter: 'Asset class',
+    sectorFilter: 'Sector',
+    allClasses: 'All classes',
+    allSectors: 'All sectors',
+    tableLabel: 'Positions',
+    count_one: '{{count}} position',
+    count_other: '{{count}} positions',
+    total_one: 'Total · {{count}} position',
+    total_other: 'Total · {{count}} positions',
+    empty: 'No positions match these filters.',
+    emptyPortfolio: 'No positions yet. Buy an asset to open one.',
+    resetFilters: 'Clear filters',
+    columns: {
+      asset: 'Asset',
+      class: 'Class',
+      quantity: 'Quantity',
+      avgPrice: 'Avg price',
+      price: 'Price',
+      dayChange: 'Today',
+      value: 'Market value',
+      pnl: 'P/L',
+      pnlPct: 'P/L %',
+      weight: 'Weight',
+      trend: '30 days',
+    },
+  },
+  asset: {
+    notFoundTitle: 'Asset not found',
+    notFoundDescription: 'There is no asset with ticker {{ticker}} in this demo.',
+    backToPositions: 'Go to positions',
+    buy: 'Buy',
+    sell: 'Sell',
+    noSector: 'No sector',
+    chart: {
+      title: 'Price',
+      candles: 'Candles',
+      line: 'Line',
+      mode: 'Chart type',
+      volume: 'Vol',
+      aria: '{{ticker}} price chart',
+      summary: 'From {{from}} to {{to}} the price went from {{start}} to {{end}} ({{change}}).',
+    },
+    position: {
+      title: 'Your position',
+      quantity: 'Quantity',
+      avgPrice: 'Average price',
+      value: 'Market value',
+      pnl: 'Unrealized P/L',
+      realized: 'Realized P/L',
+      dividends: 'Dividends received',
+      weight: 'Weight in portfolio',
+      none: 'No position',
+      noneHint: 'You do not hold this asset. Buy it to open a position.',
+    },
+    transactions: {
+      title: 'Transactions in {{ticker}}',
+      empty: 'No transactions in this asset yet.',
+      viewAll: 'All {{ticker}} transactions',
+    },
+  },
   assetClass: {
     stock: 'Stocks',
     etf: 'ETFs',
@@ -149,7 +212,14 @@ export const en = {
   },
 };
 
-type DeepStrings<T> = { [K in keyof T]: T[K] extends string ? string : DeepStrings<T[K]> };
+/** Русскому нужны формы _few/_many рядом с английскими _one/_other — они необязательны. */
+type PluralExtras<T> = {
+  [K in keyof T as K extends `${infer B}_other` ? `${B}_few` | `${B}_many` : never]?: string;
+};
+
+type DeepStrings<T> = {
+  [K in keyof T]: T[K] extends string ? string : DeepStrings<T[K]>;
+} & PluralExtras<T>;
 
 /** Форма словаря: те же ключи, любые строки. */
 export type Dictionary = DeepStrings<typeof en>;

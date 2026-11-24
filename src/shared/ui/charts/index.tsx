@@ -1,5 +1,6 @@
 import { lazy, Suspense, type ComponentProps } from 'react';
 import { Skeleton } from '@/shared/ui/skeleton';
+import type { CandleChart as CandleChartComponent } from './CandleChart';
 import type { DonutChart as DonutChartComponent } from './DonutChart';
 import type { TimeSeriesChart as TimeSeriesChartComponent } from './TimeSeriesChart';
 
@@ -9,6 +10,9 @@ import type { TimeSeriesChart as TimeSeriesChartComponent } from './TimeSeriesCh
  */
 const TimeSeriesChartImpl = lazy(() =>
   import('./TimeSeriesChart').then((m) => ({ default: m.TimeSeriesChart })),
+);
+const CandleChartImpl = lazy(() =>
+  import('./CandleChart').then((m) => ({ default: m.CandleChart })),
 );
 const DonutChartImpl = lazy(() => import('./DonutChart').then((m) => ({ default: m.DonutChart })));
 
@@ -20,6 +24,14 @@ export function TimeSeriesChart(props: ComponentProps<typeof TimeSeriesChartComp
   return (
     <Suspense fallback={<ChartSkeleton className={props.className} />}>
       <TimeSeriesChartImpl {...props} />
+    </Suspense>
+  );
+}
+
+export function CandleChart(props: ComponentProps<typeof CandleChartComponent>) {
+  return (
+    <Suspense fallback={<ChartSkeleton className={props.className} />}>
+      <CandleChartImpl {...props} />
     </Suspense>
   );
 }
