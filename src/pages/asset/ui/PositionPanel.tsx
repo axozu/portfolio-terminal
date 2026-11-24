@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePositions } from '@/entities/portfolio';
+import { useLivePositions } from '@/entities/portfolio';
 import { useFormat } from '@/shared/i18n';
 import { Delta } from '@/shared/ui/Delta';
 import { Panel } from '@/shared/ui/Panel';
@@ -24,7 +24,7 @@ interface PositionPanelProps {
 export function PositionPanel({ ticker, quantityPrecision }: PositionPanelProps) {
   const { t } = useTranslation();
   const format = useFormat();
-  const { data, isPending, isError, refetch } = usePositions();
+  const { data, isPending, isError, refetch } = useLivePositions();
   const position = data?.find((p) => p.ticker === ticker);
 
   return (
@@ -36,7 +36,7 @@ export function PositionPanel({ ticker, quantityPrecision }: PositionPanelProps)
           ))}
         </div>
       ) : isError ? (
-        <ErrorState onRetry={() => void refetch()} />
+        <ErrorState onRetry={refetch} />
       ) : !position ? (
         <EmptyState title={t('asset.position.none')} description={t('asset.position.noneHint')} />
       ) : (

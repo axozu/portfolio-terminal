@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { useAssets } from '@/entities/asset';
-import { usePositions, type PositionItem } from '@/entities/portfolio';
+import { useLivePositions, type PositionItem } from '@/entities/portfolio';
+import { Flash } from '@/shared/ui/Flash';
 import { useFormat } from '@/shared/i18n';
 import { Delta } from '@/shared/ui/Delta';
 import { Panel } from '@/shared/ui/Panel';
@@ -43,7 +44,7 @@ function MoverList({
                 </span>
                 <span className="text-right">
                   <span className="num block text-[13px] text-foreground">
-                    {format.price(p.currentPrice)}
+                    <Flash value={p.currentPrice}>{format.price(p.currentPrice)}</Flash>
                   </span>
                   <Delta value={p.dayChangePct} kind="percent" className="text-xs" />
                 </span>
@@ -58,7 +59,7 @@ function MoverList({
 
 export function MoversPanel() {
   const { t } = useTranslation();
-  const { data, isPending, isError, refetch } = usePositions();
+  const { data, isPending, isError, refetch } = useLivePositions();
 
   return (
     <Panel title={t('overview.movers.title')} className="xl:col-span-5">
@@ -69,7 +70,7 @@ export function MoversPanel() {
           ))}
         </div>
       ) : isError ? (
-        <ErrorState onRetry={() => void refetch()} />
+        <ErrorState onRetry={refetch} />
       ) : data.length === 0 ? (
         <EmptyState description={t('overview.movers.empty')} />
       ) : (

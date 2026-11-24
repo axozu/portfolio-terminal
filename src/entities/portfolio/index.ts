@@ -5,6 +5,7 @@ export {
   usePortfolioSummary,
   usePositions,
 } from './api/portfolioQueries';
+export { useLivePositions, useLivePrice, useLiveSummary } from './model/live';
 export type {
   AnalyticsResponse,
   HistoryPoint,

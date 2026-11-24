@@ -1,13 +1,13 @@
 import { Pause, Play } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/shared/lib/utils';
-import { usePriceFeedStore } from '../model/store';
+import { useLivePricesStore } from '@/shared/store/livePrices';
 
 /** `● LIVE` с кнопкой паузы. Точка пульсирует, только пока фид идёт. */
 export function LiveIndicator() {
   const { t } = useTranslation();
-  const paused = usePriceFeedStore((s) => s.paused);
-  const togglePaused = usePriceFeedStore((s) => s.togglePaused);
+  const paused = useLivePricesStore((s) => s.paused);
+  const togglePaused = useLivePricesStore((s) => s.togglePaused);
 
   return (
     <button

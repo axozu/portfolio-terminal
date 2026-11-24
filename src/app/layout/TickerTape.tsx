@@ -2,28 +2,36 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { useAssets, type AssetListItem } from '@/entities/asset';
 import { useFormat } from '@/shared/i18n';
+import { useLivePricesStore } from '@/shared/store/livePrices';
 import { Delta } from '@/shared/ui/Delta';
+import { Flash } from '@/shared/ui/Flash';
 
 function TapeItems({ assets, hidden }: { assets: readonly AssetListItem[]; hidden?: boolean }) {
   const format = useFormat();
+  const prices = useLivePricesStore((s) => s.prices);
   return (
     <ul className="flex shrink-0" aria-hidden={hidden}>
-      {assets.map((asset) => (
-        <li key={asset.ticker}>
-          <Link
-            to={`/assets/${asset.ticker}`}
-            tabIndex={hidden ? -1 : undefined}
-            className="flex h-full items-center gap-2 border-r px-3 text-xs whitespace-nowrap hover:bg-accent"
-          >
-            <span className="num font-medium text-foreground">{asset.ticker}</span>
-            <span className="num text-muted-foreground">{format.price(asset.price)}</span>
-            <Delta
-              value={asset.previousClose > 0 ? asset.price / asset.previousClose - 1 : 0}
-              kind="percent"
-            />
-          </Link>
-        </li>
-      ))}
+      {assets.map((asset) => {
+        const price = prices[asset.ticker] ?? asset.price;
+        return (
+          <li key={asset.ticker}>
+            <Link
+              to={`/assets/${asset.ticker}`}
+              tabIndex={hidden ? -1 : undefined}
+              className="flex h-full items-center gap-2 border-r px-3 text-xs whitespace-nowrap hover:bg-accent"
+            >
+              <span className="num font-medium text-foreground">{asset.ticker}</span>
+              <Flash value={price} className="num px-0.5 text-muted-foreground">
+                {format.price(price)}
+              </Flash>
+              <Delta
+                value={asset.previousClose > 0 ? price / asset.previousClose - 1 : 0}
+                kind="percent"
+              />
+            </Link>
+          </li>
+        );
+      })}
     </ul>
   );
 }

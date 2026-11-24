@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { usePortfolioSummary } from '@/entities/portfolio';
+import { useLiveSummary } from '@/entities/portfolio';
 import { useFormat } from '@/shared/i18n';
 import { ChartSkeleton, DonutChart } from '@/shared/ui/charts';
 import { Panel } from '@/shared/ui/Panel';
@@ -9,7 +9,7 @@ import { orderAllocation } from '../model/selectors';
 export function AllocationPanel() {
   const { t } = useTranslation();
   const format = useFormat();
-  const { data, isPending, isError, refetch } = usePortfolioSummary();
+  const { data, isPending, isError, refetch } = useLiveSummary();
   const slices = data ? orderAllocation(data.allocation) : [];
 
   return (
@@ -17,7 +17,7 @@ export function AllocationPanel() {
       {isPending ? (
         <ChartSkeleton className="h-44 w-full" />
       ) : isError ? (
-        <ErrorState onRetry={() => void refetch()} />
+        <ErrorState onRetry={refetch} />
       ) : slices.length === 0 ? (
         <EmptyState />
       ) : (

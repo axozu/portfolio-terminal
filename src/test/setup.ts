@@ -1,7 +1,8 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup, configure } from '@testing-library/react';
-import { afterAll, afterEach, beforeAll, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest';
 import '@/shared/i18n';
+import { useLivePricesStore } from '@/shared/store/livePrices';
 import { server } from './mockApi';
 
 // В jsdom нет canvas: Lightweight Charts заменяется доступной заглушкой с той же разметкой.
@@ -21,6 +22,11 @@ configure({ asyncUtilTimeout: 5000 });
 
 beforeAll(() => {
   server.listen({ onUnhandledFrame: 'error' });
+});
+
+beforeEach(() => {
+  // Live-фид в тестах стоит на паузе: значения не меняются посреди проверок.
+  useLivePricesStore.setState({ prices: {}, paused: true, hidden: false });
 });
 
 afterEach(() => {

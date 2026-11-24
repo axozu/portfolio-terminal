@@ -158,3 +158,51 @@ export function computePortfolio(
   const positions = computePositions(openHoldings(state), quotes, state.cash);
   return { positions, summary: summarizePortfolio(positions, state.cash, state.totals) };
 }
+
+/**
+ * Пересчёт позиций от новых текущих цен (live-тики). Количество, стоимость покупки
+ * и закрытие предыдущего дня не меняются; веса пересчитываются от новой полной стоимости.
+ */
+export function repricePositions<P extends Position>(
+  positions: readonly P[],
+  prices: ReadonlyMap<string, number>,
+  cash: number,
+): P[] {
+  const priced = positions.map((p) => {
+    const price = prices.get(p.ticker) ?? p.currentPrice;
+    return { position: p, price, marketValue: p.quantity * price };
+  });
+  const totalValue = sum(priced.map((p) => p.marketValue)) + cash;
+  return priced.map(({ position, price, marketValue }) => {
+    const unrealizedPnl = marketValue - position.costBasis;
+    return {
+      ...position,
+      currentPrice: price,
+      marketValue,
+      unrealizedPnl,
+      unrealizedPnlPct: position.costBasis > 0 ? unrealizedPnl / position.costBasis : 0,
+      dayChange: position.quantity * (price - position.previousClose),
+      dayChangePct:
+        position.previousClose > 0 ? (price - position.previousClose) / position.previousClose : 0,
+      weight: totalValue > 0 ? marketValue / totalValue : 0,
+    };
+  });
+}
+
+/**
+ * Сводка от пересчитанных позиций: итоги леджера (вложения, реализованный P/L, дивиденды)
+ * берутся из исходной сводки, рыночные показатели — заново из позиций.
+ */
+export function repriceSummary<S extends PortfolioSummary>(
+  summary: S,
+  positions: readonly Position[],
+): S {
+  const live = summarizePortfolio(positions, summary.cash, {
+    deposits: summary.netInvested,
+    withdrawals: 0,
+    dividends: summary.dividends,
+    fees: summary.fees,
+    realizedPnl: summary.realizedPnl,
+  });
+  return { ...summary, ...live };
+}

@@ -1,22 +1,20 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import { useAssets } from '@/entities/asset';
-import { useFormat } from '@/shared/i18n';
 import { useUiStore } from '@/shared/store/ui';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
-import { Delta } from '@/shared/ui/Delta';
 import { PageHeader } from '@/shared/ui/PageHeader';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { ErrorState } from '@/shared/ui/states';
 import { AssetNotFound } from './ui/AssetNotFound';
+import { AssetQuote } from './ui/AssetQuote';
 import { AssetTransactionsPanel } from './ui/AssetTransactionsPanel';
 import { PositionPanel } from './ui/PositionPanel';
 import { PriceChartPanel } from './ui/PriceChartPanel';
 
 export function AssetPage() {
   const { t } = useTranslation();
-  const format = useFormat();
   const openCreateForm = useUiStore((s) => s.openCreateForm);
   const ticker = (useParams().ticker ?? '').toUpperCase();
   const { data: assets, isPending, isError, refetch } = useAssets();
@@ -45,8 +43,6 @@ export function AssetPage() {
     );
   }
 
-  const change = asset.previousClose > 0 ? asset.price / asset.previousClose - 1 : 0;
-
   return (
     <section data-testid="page-asset" className="flex flex-col gap-3 md:gap-4">
       <PageHeader
@@ -62,8 +58,11 @@ export function AssetPage() {
             <Badge variant="outline">
               {asset.sector ? t(`sector.${asset.sector}`) : t('asset.noSector')}
             </Badge>
-            <span className="num text-base text-foreground">{format.price(asset.price)}</span>
-            <Delta value={change} kind="percent" />
+            <AssetQuote
+              ticker={asset.ticker}
+              price={asset.price}
+              previousClose={asset.previousClose}
+            />
           </span>
         }
         actions={

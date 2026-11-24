@@ -3,6 +3,7 @@ import type { TFunction } from 'i18next';
 import { Link } from 'react-router';
 import type { Formatters } from '@/shared/i18n';
 import { Delta } from '@/shared/ui/Delta';
+import { Flash } from '@/shared/ui/Flash';
 import type { DataTableFeatures } from '@/shared/ui/tableFeatures';
 import { Sparkline } from '@/shared/ui/Sparkline';
 import type { PositionRow } from '../model/rows';
@@ -53,7 +54,11 @@ export function positionColumns(t: TFunction, format: Formatters) {
     }),
     column.accessor('currentPrice', {
       header: t('positions.columns.price'),
-      cell: (info) => <span className="num">{format.price(info.getValue())}</span>,
+      cell: (info) => (
+        <Flash value={info.getValue()} className="num px-0.5">
+          {format.price(info.getValue())}
+        </Flash>
+      ),
       meta: right,
     }),
     column.accessor('dayChangePct', {

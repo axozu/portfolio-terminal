@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAssets } from '@/entities/asset';
-import { usePositions } from '@/entities/portfolio';
+import { useLivePositions } from '@/entities/portfolio';
 import { useUiStore } from '@/shared/store/ui';
 import { Button } from '@/shared/ui/button';
 import { PageHeader } from '@/shared/ui/PageHeader';
@@ -20,7 +20,7 @@ import { PositionsToolbar } from './ui/PositionsToolbar';
 export function PositionsPage() {
   const { t } = useTranslation();
   const openCreateForm = useUiStore((s) => s.openCreateForm);
-  const positions = usePositions();
+  const positions = useLivePositions();
   const assets = useAssets();
   const [filters, setFilters] = useState<PositionFilters>(EMPTY_FILTERS);
 
@@ -53,7 +53,7 @@ export function PositionsPage() {
           <div className="px-3">
             <ErrorState
               onRetry={() => {
-                void positions.refetch();
+                positions.refetch();
                 void assets.refetch();
               }}
             />

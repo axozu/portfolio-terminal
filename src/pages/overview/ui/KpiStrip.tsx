@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { usePortfolioSummary } from '@/entities/portfolio';
+import { useLiveSummary } from '@/entities/portfolio';
+import { Flash } from '@/shared/ui/Flash';
 import { useFormat } from '@/shared/i18n';
 import { Delta } from '@/shared/ui/Delta';
 import { Kpi, KpiGrid } from '@/shared/ui/KpiGrid';
@@ -10,7 +11,7 @@ import { ErrorState } from '@/shared/ui/states';
 export function KpiStrip() {
   const { t } = useTranslation();
   const format = useFormat();
-  const { data, isPending, isError, refetch } = usePortfolioSummary();
+  const { data, isPending, isError, refetch } = useLiveSummary();
 
   if (isPending) {
     return (
@@ -27,7 +28,7 @@ export function KpiStrip() {
   if (isError) {
     return (
       <div className="border bg-card px-4">
-        <ErrorState onRetry={() => void refetch()} />
+        <ErrorState onRetry={refetch} />
       </div>
     );
   }
@@ -36,7 +37,7 @@ export function KpiStrip() {
     <KpiGrid>
       <Kpi
         label={t('overview.kpi.totalValue')}
-        value={format.money(data.totalValue)}
+        value={<Flash value={data.totalValue}>{format.money(data.totalValue)}</Flash>}
         sub={t('overview.kpi.invested', {
           amount: format.money(data.netInvested, { compact: true }),
         })}

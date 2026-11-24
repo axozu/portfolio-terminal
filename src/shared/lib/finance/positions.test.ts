@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Quote } from '@/shared/model';
 import { createTxFactory } from '@/test/fixtures/transactions';
-import { computePortfolio, quoteFromCandles } from './positions';
+import { computePortfolio, quoteFromCandles, repricePositions, repriceSummary } from './positions';
 
 const tx = createTxFactory();
 
@@ -135,5 +135,61 @@ describe('quoteFromCandles', () => {
 
   it('uses the same close when there is a single candle', () => {
     expect(quoteFromCandles('A', [candle('2024-01-02', 10)]).previousClose).toBe(10);
+  });
+});
+
+describe('live repricing', () => {
+  const tx2 = createTxFactory();
+  const snapshot = computePortfolio(
+    [
+      tx2.deposit('2024-01-02', 10_000),
+      tx2.buy('2024-01-03', 'AAPL', 10, 100),
+      tx2.buy('2024-01-03', 'BTC', 0.1, 40_000),
+      tx2.sell('2024-01-10', 'AAPL', 2, 120),
+    ],
+    quotes(['AAPL', 110, 100], ['BTC', 50_000, 48_000]),
+  );
+
+  it('reprices positions from new prices and keeps unknown tickers', () => {
+    const live = repricePositions(
+      snapshot.positions,
+      new Map([['AAPL', 121]]),
+      snapshot.summary.cash,
+    );
+    const aapl = live.find((p) => p.ticker === 'AAPL');
+    const btc = live.find((p) => p.ticker === 'BTC');
+    expect(aapl?.currentPrice).toBe(121);
+    expect(aapl?.marketValue).toBeCloseTo(8 * 121, 9);
+    expect(aapl?.dayChange).toBeCloseTo(8 * 21, 9);
+    expect(btc?.currentPrice).toBe(50_000);
+  });
+
+  it('matches a full recomputation at the same prices', () => {
+    const prices = new Map([
+      ['AAPL', 95],
+      ['BTC', 51_000],
+    ]);
+    const live = repricePositions(snapshot.positions, prices, snapshot.summary.cash);
+    const summary = repriceSummary(snapshot.summary, live);
+    const full = computePortfolio(
+      [
+        tx2.deposit('2024-01-02', 10_000),
+        tx2.buy('2024-01-03', 'AAPL', 10, 100),
+        tx2.buy('2024-01-03', 'BTC', 0.1, 40_000),
+        tx2.sell('2024-01-10', 'AAPL', 2, 120),
+      ],
+      quotes(['AAPL', 95, 100], ['BTC', 51_000, 48_000]),
+    );
+    for (const key of [
+      'totalValue',
+      'dayChange',
+      'dayChangePct',
+      'unrealizedPnl',
+      'totalReturn',
+      'realizedPnl',
+    ] as const) {
+      expect(summary[key]).toBeCloseTo(full.summary[key], 9);
+    }
+    expect(summary.totalReturnPct).toBeCloseTo(full.summary.totalReturnPct ?? 0, 12);
   });
 });
