@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { TransactionFormSheet } from '@/features/transaction-form';
 import { useUiStore } from '@/shared/store/ui';
 import { cn } from '@/shared/lib/utils';
 import { BottomNav } from './BottomNav';
@@ -39,6 +40,7 @@ export function AppLayout() {
       </main>
       <Footer />
       <BottomNav />
+      <TransactionFormSheet />
     </div>
   );
 }

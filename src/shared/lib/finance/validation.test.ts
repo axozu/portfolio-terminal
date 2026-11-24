@@ -8,13 +8,15 @@ const deposit = tx.deposit('2024-01-02', 1_000);
 const buy = tx.buy('2024-01-03', 'AAPL', 5, 100); // кэш 500
 const sell = tx.sell('2024-02-01', 'AAPL', 3, 110); // кэш 830, позиция 2
 
+const ledger = [deposit, buy, sell];
+
 const ctx: ValidationContext = {
   today: '2024-06-01',
   assets: new Map([
     ['AAPL', { quantityPrecision: 4, historyStart: '2023-01-02' }],
     ['BTC', { quantityPrecision: 8, historyStart: '2023-01-02' }],
   ]),
-  transactions: [deposit, buy, sell],
+  transactions: ledger,
 };
 
 const buyInput = (
@@ -185,11 +187,11 @@ describe('validateTransaction: ledger', () => {
 
 describe('validateDeletion', () => {
   it('allows deleting a transaction nothing depends on', () => {
-    expect(validateDeletion(sell.id, ctx.transactions)).toBeNull();
+    expect(validateDeletion(sell.id, ledger)).toBeNull();
   });
 
   it('rejects deleting a buy that a later sale depends on', () => {
-    expect(validateDeletion(buy.id, ctx.transactions)).toEqual({
+    expect(validateDeletion(buy.id, ledger)).toEqual({
       transactionId: sell.id,
       date: '2024-02-01',
       reason: 'insufficient_quantity',
@@ -197,9 +199,21 @@ describe('validateDeletion', () => {
   });
 
   it('rejects deleting the deposit that funds everything', () => {
-    expect(validateDeletion(deposit.id, ctx.transactions)).toMatchObject({
+    expect(validateDeletion(deposit.id, ledger)).toMatchObject({
       transactionId: buy.id,
       reason: 'insufficient_cash',
+    });
+  });
+});
+
+describe('validateTransaction without a ledger (client side)', () => {
+  it('checks shape and domain rules but skips ledger integrity', () => {
+    const clientCtx = { ...ctx, transactions: undefined };
+    expect(validateTransaction(buyInput({ quantity: 1_000 }), clientCtx)).toMatchObject({
+      ok: true,
+    });
+    expect(validateTransaction(buyInput({ date: '2030-01-01' }), clientCtx)).toMatchObject({
+      fieldErrors: { date: { code: 'date_in_future' } },
     });
   });
 });

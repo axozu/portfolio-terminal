@@ -39,6 +39,8 @@ const CRYPTO_FEE_RATE = 0.001;
 const DIVIDEND_MONTHS = new Set(['06', '12']);
 const PAYOUTS_PER_YEAR = 2;
 const WITHDRAWAL_MONTH = 20;
+/** В последние месяцы пополнения копятся в кэше: в демо должно хватать денег на новую покупку. */
+const CASH_RESERVE_MONTHS = 3;
 
 /** Omit, применённый к каждому варианту объединения по отдельности. */
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
@@ -147,6 +149,7 @@ export function generateTransactions(
     drafts: [],
   };
 
+  const totalMonths = new Set(dates.map(monthOf)).size;
   let monthIndex = 0;
   let dayInMonth = 0;
   let previousMonth = '';
@@ -171,8 +174,9 @@ export function generateTransactions(
 
     if (dayInMonth === 1) {
       emit(ctx, cashTx('deposit', date, roundTo(rng.between(1_500, 3_500), -2)));
-      // В месяц вывода не докупаем: деньги копятся под вывод.
-      const count = isWithdrawalMonth ? 0 : rng.chance(0.3) ? 2 : 1;
+      // В месяц вывода и в последние месяцы не докупаем: деньги копятся.
+      const keepCash = isWithdrawalMonth || monthIndex >= totalMonths - CASH_RESERVE_MONTHS;
+      const count = keepCash ? 0 : rng.chance(0.3) ? 2 : 1;
       for (let i = 0; i < count; i++) {
         const budget = ctx.state.cash * (count === 2 ? 0.45 : 0.85);
         buy(ctx, date, day, rng.pick(MONTHLY_BUY_UNIVERSE), budget);

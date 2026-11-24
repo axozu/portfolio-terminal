@@ -168,6 +168,10 @@ describe('resulting portfolio', () => {
     expect(summary.totalValue).toBeLessThan(250_000);
   });
 
+  it('keeps enough cash to try a purchase in the demo', () => {
+    expect(summary.cash).toBeGreaterThan(3_000);
+  });
+
   it('is in profit over the whole period', () => {
     expect(summary.totalReturn).toBeGreaterThan(0);
   });

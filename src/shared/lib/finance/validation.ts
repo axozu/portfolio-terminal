@@ -47,8 +47,11 @@ export interface AssetConstraints {
 export interface ValidationContext {
   today: IsoDate;
   assets: ReadonlyMap<string, AssetConstraints>;
-  /** Текущий леджер. */
-  transactions: readonly Transaction[];
+  /**
+   * Текущий леджер. Без него проверка целостности леджера пропускается: так валидирует
+   * клиент, у которого нет полного списка сделок (её выполнит «сервер»).
+   */
+  transactions?: readonly Transaction[];
   /** id изменяемой сделки; без него сделка создаётся. */
   editingId?: string;
 }
@@ -132,6 +135,8 @@ export function validateTransaction(
 
   const fieldErrors = domainFieldErrors(input, ctx);
   if (Object.keys(fieldErrors).length > 0) return { ok: false, fieldErrors };
+
+  if (ctx.transactions === undefined) return { ok: true, value: input };
 
   const id = ctx.editingId ?? DRAFT_ID;
   const candidate: Transaction = { ...input, id };

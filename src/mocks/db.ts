@@ -43,7 +43,9 @@ export class MockDb {
 
   constructor({ today, storage, seed, createId }: MockDbOptions) {
     const data = generateDemoData({ today, seed });
-    this.today = data.dates.at(-1) ?? today;
+    // «Сегодня» — реальная дата: в выходные можно записать пополнение сегодняшним днём,
+    // хотя последняя свеча — пятничная.
+    this.today = today;
     this.dates = data.dates;
     this.assets = data.assets;
     this.assetsByTicker = new Map(data.assets.map((a) => [a.ticker, a]));
