@@ -1,43 +1,72 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import '@fontsource/ibm-plex-sans/400.css';
+@import '@fontsource/ibm-plex-sans/500.css';
+@import '@fontsource/ibm-plex-sans/600.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
 
 /*
- * Дизайн-токены. Единственный источник цветов и радиусов для всего приложения.
- * Проект поддерживает только тёмную тему («терминал трейдера»), поэтому
- * значения заданы прямо в :root, без .dark-варианта.
- * Полная палитра (графики, рост/падение) расширяется на этапе 3.
+ * Дизайн-токены — единственный источник цветов, размеров каркаса и палитры графиков.
+ * Только тёмная тема («терминал трейдера»), поэтому значения заданы прямо в :root.
+ *
+ * Основа — графит с холодным оттенком; акцент — янтарный «фосфор» старых биржевых терминалов.
+ * Зелёный и красный зарезервированы за ростом и падением и больше нигде не используются.
  */
 :root {
   color-scheme: dark;
 
+  /* Поверхности */
+  --background: #0e1116;
+  --card: #151a21;
+  --raised: #1b222b;
+  --border: #262e39;
+  --border-strong: #34404e;
+
+  /* Текст: контраст с --background — 14.9:1 и 6.4:1 (WCAG AA) */
+  --foreground: #e6eaf0;
+  --muted-foreground: #8a94a3;
+
+  /* Акцент и состояния */
+  --primary: #f2b23a;
+  --primary-foreground: #1a1204;
+  --gain: #3fcf8e;
+  --loss: #f2545b;
+  --destructive: var(--loss);
+
+  /* Палитра графиков: одна на все графики, порядок задаёт назначение серий. */
+  --chart-1: #f2b23a; /* янтарный — портфель */
+  --chart-2: #5ab0f0; /* голубой — бенчмарк */
+  --chart-3: #a48bf5;
+  --chart-4: #3cc6b8;
+  --chart-5: #e879a6;
+  --chart-6: #8a94a3;
+  --chart-grid: #1f262f;
+
+  /* Совместимость с shadcn */
+  --card-foreground: var(--foreground);
+  --popover: var(--raised);
+  --popover-foreground: var(--foreground);
+  --secondary: var(--raised);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--raised);
+  --accent: #222a35;
+  --accent-foreground: var(--foreground);
+  --input: var(--border-strong);
+  --ring: var(--primary);
   --radius: 0.125rem;
 
-  --background: oklch(0.155 0.006 250);
-  --foreground: oklch(0.93 0.005 250);
-  --card: oklch(0.19 0.007 250);
-  --card-foreground: var(--foreground);
-  --popover: oklch(0.2 0.007 250);
-  --popover-foreground: var(--foreground);
-  --primary: oklch(0.8 0.16 75);
-  --primary-foreground: oklch(0.18 0.02 75);
-  --secondary: oklch(0.24 0.008 250);
-  --secondary-foreground: var(--foreground);
-  --muted: oklch(0.23 0.007 250);
-  --muted-foreground: oklch(0.7 0.01 250);
-  --accent: oklch(0.26 0.01 250);
-  --accent-foreground: var(--foreground);
-  --destructive: oklch(0.65 0.2 25);
-  --border: oklch(0.28 0.008 250);
-  --input: oklch(0.3 0.008 250);
-  --ring: oklch(0.8 0.16 75);
-
-  --gain: oklch(0.75 0.17 150);
-  --loss: oklch(0.68 0.2 25);
+  /* Каркас */
+  --header-height: 3rem;
+  --tape-height: 1.75rem;
+  --sidebar-width: 13.5rem;
+  --sidebar-rail: 3.5rem;
+  --bottom-nav-height: 3.5rem;
 }
 
 @theme inline {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', monospace;
 
   --radius-sm: calc(var(--radius) * 0.5);
   --radius-md: var(--radius);
@@ -47,6 +76,7 @@
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  --color-raised: var(--raised);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
@@ -59,18 +89,83 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-gain: var(--gain);
   --color-loss: var(--loss);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+
+  --spacing-header: var(--header-height);
+  --spacing-tape: var(--tape-height);
+  --spacing-sidebar: var(--sidebar-width);
+  --spacing-rail: var(--sidebar-rail);
+  --spacing-bottom-nav: var(--bottom-nav-height);
+
+  --animate-tape: tape 60s linear infinite;
+  --animate-flash-gain: flash-gain 0.9s ease-out;
+  --animate-flash-loss: flash-loss 0.9s ease-out;
+
+  @keyframes tape {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes flash-gain {
+    from {
+      background-color: color-mix(in oklab, var(--gain) 28%, transparent);
+    }
+  }
+  @keyframes flash-loss {
+    from {
+      background-color: color-mix(in oklab, var(--loss) 28%, transparent);
+    }
+  }
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/60;
+    @apply border-border outline-ring/70;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
-    @apply bg-background font-sans text-foreground antialiased;
+    @apply bg-background font-sans text-sm text-foreground antialiased;
+    font-feature-settings: 'ss02';
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--primary) 35%, transparent);
+  }
+}
+
+@layer utilities {
+  /** Все числа — моноширинные с табличными цифрами, чтобы колонки не «прыгали». */
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums slashed-zero;
+    letter-spacing: -0.01em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

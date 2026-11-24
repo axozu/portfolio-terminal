@@ -1,0 +1,106 @@
+/** Английский словарь — эталон структуры: русский обязан повторять его ключи. */
+export const en = {
+  app: {
+    name: 'Portfolio Terminal',
+    demoBadge: 'Demo data',
+    demoBadgeHint: 'Prices and trades are generated. Nothing here is real market data.',
+    skipToContent: 'Skip to content',
+  },
+  nav: {
+    label: 'Main navigation',
+    overview: 'Overview',
+    positions: 'Positions',
+    transactions: 'Transactions',
+    analytics: 'Analytics',
+    collapse: 'Collapse sidebar',
+    expand: 'Expand sidebar',
+  },
+  header: {
+    portfolioValue: 'Portfolio value',
+    dayChange: 'Today',
+    newTransaction: 'New transaction',
+    live: 'Live',
+    paused: 'Paused',
+    pauseFeed: 'Pause live prices',
+    resumeFeed: 'Resume live prices',
+    language: 'Language',
+  },
+  tape: {
+    label: 'Market prices',
+  },
+  footer: {
+    source: 'Source on GitHub',
+    chartsBy: 'Charts by',
+    resetDemo: 'Reset demo data',
+    resetDone: 'Demo data reset',
+    resetFailed: 'Could not reset demo data',
+  },
+  notices: {
+    demoRefreshed: 'Demo data updated. Your earlier changes no longer fit the new price history.',
+  },
+  states: {
+    errorTitle: 'Could not load this block',
+    errorPageTitle: 'This page failed to load',
+    errorDescription: 'The request failed. Try again — the demo API recovers on its own.',
+    retry: 'Try again',
+    reload: 'Reload page',
+    empty: 'Nothing here yet',
+    loading: 'Loading…',
+  },
+  notFound: {
+    title: 'Page not found',
+    description: 'There is no page at {{path}}.',
+    home: 'Go to overview',
+  },
+  pages: {
+    overview: 'Overview',
+    positions: 'Positions',
+    transactions: 'Transactions',
+    analytics: 'Analytics',
+    asset: 'Asset',
+  },
+  assetClass: {
+    stock: 'Stocks',
+    etf: 'ETFs',
+    bond: 'Bond funds',
+    crypto: 'Crypto',
+    cash: 'Cash',
+  },
+  sector: {
+    technology: 'Technology',
+    communication: 'Communication',
+    consumer_discretionary: 'Consumer discretionary',
+    consumer_staples: 'Consumer staples',
+    healthcare: 'Healthcare',
+    energy: 'Energy',
+    financials: 'Financials',
+    real_estate: 'Real estate',
+    diversified: 'Diversified',
+  },
+  transactionType: {
+    buy: 'Buy',
+    sell: 'Sell',
+    dividend: 'Dividend',
+    deposit: 'Deposit',
+    withdrawal: 'Withdrawal',
+  },
+  validation: {
+    required: 'Required',
+    invalid: 'Invalid value',
+    too_long: 'Too long',
+    unknown_asset: 'Unknown asset',
+    date_in_future: 'Date cannot be in the future',
+    date_before_history: 'Price history starts on {{date}}',
+    must_be_positive: 'Must be greater than zero',
+    must_be_non_negative: 'Cannot be negative',
+    too_many_decimals: 'At most {{precision}} decimal places',
+    insufficient_cash: 'Not enough cash on this date: {{available}} available',
+    insufficient_quantity: 'Not enough units on this date: {{available}} held',
+    no_position: 'No position in this asset on this date',
+  },
+};
+
+type DeepStrings<T> = { [K in keyof T]: T[K] extends string ? string : DeepStrings<T[K]> };
+
+/** Форма словаря: те же ключи, любые строки. */
+export type Dictionary = DeepStrings<typeof en>;

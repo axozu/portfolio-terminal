@@ -1,12 +1,7 @@
-import { render, screen } from '@testing-library/react';
-import { createMemoryRouter, RouterProvider } from 'react-router';
+import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { routes } from './routes';
-
-function renderAt(path: string) {
-  const router = createMemoryRouter(routes, { initialEntries: [path] });
-  render(<RouterProvider router={router} />);
-}
+import { setupTestApi } from '@/test/mockApi';
+import { renderApp } from '@/test/renderApp';
 
 describe('routes', () => {
   it.each([
@@ -17,7 +12,14 @@ describe('routes', () => {
     ['/analytics', 'analytics'],
     ['/no-such-page', 'not-found'],
   ])('renders %s as the %s page', async (path, pageId) => {
-    renderAt(path);
+    setupTestApi();
+    renderApp(path);
     expect(await screen.findByTestId(`page-${pageId}`)).toBeInTheDocument();
+  });
+
+  it('shows the missing path on the 404 page', async () => {
+    setupTestApi();
+    renderApp('/nowhere');
+    expect(await screen.findByText(/\/nowhere/, { selector: 'p' })).toBeInTheDocument();
   });
 });

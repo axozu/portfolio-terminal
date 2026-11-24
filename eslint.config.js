@@ -38,6 +38,8 @@ export default defineConfig([
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
       'max-lines': ['warn', { max: 300, skipBlankLines: true, skipComments: true }],
+      // Intl ставит в ru-RU неразрывные пробелы; в регэкспах тестов они нужны намеренно.
+      'no-irregular-whitespace': ['error', { skipRegExps: true }],
     },
   },
   {

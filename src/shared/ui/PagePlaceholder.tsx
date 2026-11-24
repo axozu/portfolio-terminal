@@ -1,13 +1,16 @@
+import { useTranslation } from 'react-i18next';
+import { PageHeader } from './PageHeader';
+
 interface PagePlaceholderProps {
-  /** Технический идентификатор страницы; не пользовательский текст. */
-  pageId: string;
+  pageId: 'overview' | 'positions' | 'transactions' | 'analytics' | 'asset';
 }
 
-/** Заглушка страницы на время каркаса. Заменяется реальными страницами на этапах 4–7. */
+/** Заготовка страницы до её реализации на этапах 4–7. */
 export function PagePlaceholder({ pageId }: PagePlaceholderProps) {
+  const { t } = useTranslation();
   return (
-    <section data-testid={`page-${pageId}`} className="border border-border bg-card p-6">
-      <code className="font-mono text-sm text-primary">{pageId}</code>
+    <section data-testid={`page-${pageId}`}>
+      <PageHeader title={t(`pages.${pageId}`)} />
     </section>
   );
 }

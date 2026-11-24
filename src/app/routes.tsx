@@ -1,5 +1,6 @@
 import type { RouteObject } from 'react-router';
 import { AppLayout } from './layout/AppLayout';
+import { RouteErrorPage } from './layout/RouteErrorPage';
 
 /**
  * Описание маршрутов. Каждая страница грузится лениво — отдельным чанком.
@@ -10,6 +11,7 @@ export const routes: RouteObject[] = [
   {
     path: '/',
     element: <AppLayout />,
+    errorElement: <RouteErrorPage />,
     children: [
       {
         index: true,
