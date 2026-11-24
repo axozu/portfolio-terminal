@@ -6,6 +6,10 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // По умолчанию Vite слушает только localhost (на Windows — лишь ::1), и по 127.0.0.1
+  // или IP в локальной сети приложение не открывается. Слушаем все интерфейсы.
+  server: { host: true },
+  preview: { host: true },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
