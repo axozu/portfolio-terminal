@@ -18,11 +18,13 @@ export function Panel({ title, actions, children, className, bodyClassName }: Pa
       aria-labelledby={titleId}
       className={cn('flex min-w-0 flex-col border bg-card', className)}
     >
-      <header className="flex min-h-10 items-center justify-between gap-3 border-b px-3 py-1.5">
+      <header className="flex min-h-10 flex-wrap items-center justify-between gap-x-3 gap-y-1 border-b px-3 py-1.5">
         <h2 id={titleId} className="truncate text-[13px] font-medium text-foreground">
           {title}
         </h2>
-        {actions ? <div className="flex shrink-0 items-center gap-1">{actions}</div> : null}
+        {actions ? (
+          <div className="flex max-w-full flex-wrap items-center gap-1">{actions}</div>
+        ) : null}
       </header>
       <div className={cn('min-h-0 flex-1 p-3', bodyClassName)}>{children}</div>
     </section>

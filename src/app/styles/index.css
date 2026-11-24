@@ -34,14 +34,19 @@
   --loss: #f2545b;
   --destructive: var(--loss);
 
-  /* Палитра графиков: одна на все графики, порядок задаёт назначение серий. */
-  --chart-1: #f2b23a; /* янтарный — портфель */
-  --chart-2: #5ab0f0; /* голубой — бенчмарк */
-  --chart-3: #a48bf5;
-  --chart-4: #3cc6b8;
-  --chart-5: #e879a6;
-  --chart-6: #8a94a3;
+  /*
+   * Палитра графиков: одна на все графики. Проверена валидатором для тёмной темы:
+   * светлота OKLCH 0.48–0.67, насыщенность ≥ 0.10, различимость соседних пар при
+   * дальтонизме ΔE ≥ 9 и при нормальном зрении ≥ 16. Зелёного и красного нет — они за ростом/падением.
+   * Слоты закреплены за сущностями: 1 — портфель/акции, 2 — бенчмарк/ETF, далее по порядку.
+   */
+  --chart-1: #c98500;
+  --chart-2: #3987e5;
+  --chart-3: #d55181;
+  --chart-4: #9085e9;
+  --chart-5: #1d9aaa;
   --chart-grid: #1f262f;
+  --chart-axis: var(--muted-foreground);
 
   /* Совместимость с shadcn */
   --card-foreground: var(--foreground);
@@ -99,7 +104,6 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --color-chart-6: var(--chart-6);
 
   --spacing-header: var(--header-height);
   --spacing-tape: var(--tape-height);

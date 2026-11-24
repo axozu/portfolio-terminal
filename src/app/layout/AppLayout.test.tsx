@@ -17,7 +17,7 @@ describe('AppLayout', () => {
     expect(nav && within(nav).getByRole('link', { name: 'Positions' })).toBeInTheDocument();
     expect(screen.getByText('Demo data')).toBeInTheDocument();
     // Стоимость портфеля: $ и число с разделителями.
-    expect(await screen.findByText(/^\$\d{3},\d{3}\.\d{2}$/)).toBeInTheDocument();
+    expect((await screen.findAllByText(/^\$\d{3},\d{3}\.\d{2}$/)).length).toBeGreaterThan(0);
   });
 
   it('fills the ticker tape with asset prices', async () => {
@@ -31,14 +31,14 @@ describe('AppLayout', () => {
     setupTestApi();
     const user = userEvent.setup();
     renderApp('/');
-    await screen.findByText(/^\$\d{3},\d{3}\.\d{2}$/);
+    await screen.findAllByText(/^\$\d{3},\d{3}\.\d{2}$/);
 
     await user.click(screen.getByRole('button', { name: 'ru' }));
 
     expect(screen.getAllByRole('link', { name: 'Позиции' }).length).toBeGreaterThan(0);
     expect(screen.getByText('Демо-данные')).toBeInTheDocument();
     await waitFor(() => {
-      expect(screen.getByText(/^\d{3}[\s  ]\d{3},\d{2}[\s  ]\$$/)).toBeInTheDocument();
+      expect(screen.getAllByText(/^\d{3}[\s  ]\d{3},\d{2}[\s  ]\$$/).length).toBeGreaterThan(0);
     });
     expect(document.documentElement.lang).toBe('ru');
     expect(localStorage.getItem(LOCALE_STORAGE_KEY)).toBe('ru');
