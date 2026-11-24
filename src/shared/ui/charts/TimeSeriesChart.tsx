@@ -1,5 +1,6 @@
 import {
   AreaSeries,
+  type AutoscaleInfo,
   LineSeries,
   type IChartApi,
   type ISeriesApi,
@@ -18,12 +19,14 @@ export interface TimeSeries {
   label: string;
   slot: ChartSlot;
   kind?: 'area' | 'line';
+  /** Верхняя граница шкалы (например, 0 для просадки, которая не бывает положительной). */
+  ceiling?: number;
   data: readonly { date: IsoDate; value: number }[];
 }
 
 export interface TimeSeriesChartProps {
   series: readonly TimeSeries[];
-  valueFormat: 'money' | 'price';
+  valueFormat: 'money' | 'price' | 'percent';
   /** Короткое описание для скринридеров: что показано. */
   ariaLabel: string;
   /** Текстовое резюме: начало, конец, изменение. */
@@ -35,7 +38,21 @@ type AnySeries = ISeriesApi<'Area'> | ISeriesApi<'Line'>;
 
 function addSeries(chart: IChartApi, series: TimeSeries): AnySeries {
   const color = cssVar(series.slot);
-  const common = { priceLineVisible: false, lastValueVisible: false, crosshairMarkerRadius: 4 };
+  const { ceiling } = series;
+  const common = {
+    priceLineVisible: false,
+    lastValueVisible: false,
+    crosshairMarkerRadius: 4,
+    autoscaleInfoProvider:
+      ceiling === undefined
+        ? undefined
+        : (original: () => AutoscaleInfo | null) => {
+            const info = original();
+            return info?.priceRange
+              ? { ...info, priceRange: { ...info.priceRange, maxValue: ceiling } }
+              : info;
+          },
+  };
   const api: AnySeries =
     series.kind === 'line'
       ? chart.addSeries(LineSeries, { ...common, color, lineWidth: 2 })
@@ -47,6 +64,10 @@ function addSeries(chart: IChartApi, series: TimeSeries): AnySeries {
           bottomColor: withAlpha(color, 0),
         });
   api.setData(series.data.map((p) => ({ time: p.date, value: p.value })));
+  // С потолком у шкалы нет верхнего отступа — иначе ось подпишет значения выше потолка.
+  if (ceiling !== undefined) {
+    chart.priceScale('right').applyOptions({ scaleMargins: { top: 0.02, bottom: 0.08 } });
+  }
   return api;
 }
 
@@ -65,7 +86,15 @@ export function TimeSeriesChart({
   const apisRef = useRef(new Map<string, AnySeries>());
   const [hover, setHover] = useState<{ date: IsoDate; values: Map<string, number> } | null>(null);
 
-  const formatValue = valueFormat === 'money' ? format.money : format.price;
+  const formatValue = useMemo(
+    () => (value: number) =>
+      valueFormat === 'money'
+        ? format.money(value)
+        : valueFormat === 'percent'
+          ? format.percent(value, { decimals: 1 })
+          : format.price(value),
+    [format, valueFormat],
+  );
 
   useEffect(() => {
     chart?.applyOptions({
@@ -143,7 +172,7 @@ export function TimeSeriesChart({
         role="img"
         aria-label={ariaLabel}
         aria-describedby={summaryId}
-        className="h-full min-h-0 w-full"
+        className="min-h-0 w-full flex-1"
       />
       <p id={summaryId} className="sr-only">
         {summary}

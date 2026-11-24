@@ -249,6 +249,49 @@ export const en = {
     next: 'Next page',
     pageSize: 'Rows per page',
   },
+  analytics: {
+    metrics: {
+      volatility: 'Volatility',
+      volatilityHint:
+        'How much daily returns swing, scaled to a year: standard deviation of daily returns × √252. Higher means a bumpier ride.',
+      maxDrawdown: 'Max drawdown',
+      maxDrawdownHint:
+        'The deepest fall from a previous peak. Deposits and withdrawals are excluded, so a deposit cannot hide a loss.',
+      sharpe: 'Sharpe ratio',
+      sharpeHint:
+        'Return earned per unit of risk: (annual return − {{rate}} risk-free rate) ÷ volatility. Above 1 is considered good.',
+      dividends: 'Dividends, last 12 months',
+      dividendsHint: 'Cash paid out by your stocks and funds over the past year.',
+      period: 'Over the whole history',
+    },
+    heatmap: {
+      title: 'Monthly returns',
+      year: 'Year',
+      total: 'Year',
+      legendDown: 'Loss',
+      legendUp: 'Gain',
+      caption: 'Monthly returns by year, net of deposits and withdrawals.',
+      noData: 'No data',
+    },
+    drawdown: {
+      title: 'Drawdown',
+      series: 'Drawdown',
+      aria: 'Drawdown chart',
+      summary:
+        'The deepest drawdown was {{max}} on {{date}}. Today the portfolio is {{current}} from its peak.',
+    },
+    sectors: {
+      title: 'Allocation by sector',
+      aria: 'Allocation by sector',
+    },
+    dividends: {
+      title: 'Dividends by month',
+      aria: 'Dividends by month',
+      summary:
+        'Dividends from {{from}} to {{to}}: {{total}} in total, the largest month was {{maxMonth}} with {{max}}.',
+      empty: 'No dividends yet.',
+    },
+  },
   assetClass: {
     stock: 'Stocks',
     etf: 'ETFs',

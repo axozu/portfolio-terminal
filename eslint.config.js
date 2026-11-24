@@ -53,6 +53,11 @@ export default defineConfig([
     },
   },
   {
+    // Словари — это данные, а не код: ограничение размера файла к ним не относится.
+    files: ['src/shared/i18n/resources/**'],
+    rules: { 'max-lines': 'off' },
+  },
+  {
     files: ['**/*.js'],
     extends: [js.configs.recommended],
     languageOptions: { globals: globals.node },

@@ -140,7 +140,7 @@ export function CandleChart({ candles, mode, ariaLabel, summary, className }: Ca
         role="img"
         aria-label={ariaLabel}
         aria-describedby={summaryId}
-        className="h-full min-h-0 w-full"
+        className="min-h-0 w-full flex-1"
       />
       <p id={summaryId} className="sr-only">
         {summary}

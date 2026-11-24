@@ -2,6 +2,7 @@ import { lazy, Suspense, type ComponentProps } from 'react';
 import { Skeleton } from '@/shared/ui/skeleton';
 import type { CandleChart as CandleChartComponent } from './CandleChart';
 import type { DonutChart as DonutChartComponent } from './DonutChart';
+import type { MonthlyBarChart as MonthlyBarChartComponent } from './MonthlyBarChart';
 import type { TimeSeriesChart as TimeSeriesChartComponent } from './TimeSeriesChart';
 
 /**
@@ -13,6 +14,9 @@ const TimeSeriesChartImpl = lazy(() =>
 );
 const CandleChartImpl = lazy(() =>
   import('./CandleChart').then((m) => ({ default: m.CandleChart })),
+);
+const MonthlyBarChartImpl = lazy(() =>
+  import('./MonthlyBarChart').then((m) => ({ default: m.MonthlyBarChart })),
 );
 const DonutChartImpl = lazy(() => import('./DonutChart').then((m) => ({ default: m.DonutChart })));
 
@@ -32,6 +36,14 @@ export function CandleChart(props: ComponentProps<typeof CandleChartComponent>) 
   return (
     <Suspense fallback={<ChartSkeleton className={props.className} />}>
       <CandleChartImpl {...props} />
+    </Suspense>
+  );
+}
+
+export function MonthlyBarChart(props: ComponentProps<typeof MonthlyBarChartComponent>) {
+  return (
+    <Suspense fallback={<ChartSkeleton className={props.className} />}>
+      <MonthlyBarChartImpl {...props} />
     </Suspense>
   );
 }
