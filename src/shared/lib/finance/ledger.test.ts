@@ -1,6 +1,13 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createTxFactory, type TxFactory } from '@/test/fixtures/transactions';
-import { averagePrice, openHoldings, replayLedger, sortLedger, validateLedger } from './ledger';
+import {
+  averagePrice,
+  cashEffect,
+  openHoldings,
+  replayLedger,
+  sortLedger,
+  validateLedger,
+} from './ledger';
 
 let tx: TxFactory;
 beforeEach(() => {
@@ -184,5 +191,15 @@ describe('validation', () => {
     expect(violations).toHaveLength(1);
     expect(state.cash).toBe(150);
     expect(state.holdings.get('AAPL')).toBeUndefined();
+  });
+});
+
+describe('cashEffect', () => {
+  it('signs cash movements by type', () => {
+    expect(cashEffect(tx.deposit('2024-01-02', 100))).toBe(100);
+    expect(cashEffect(tx.withdrawal('2024-01-02', 40))).toBe(-40);
+    expect(cashEffect(tx.dividend('2024-01-02', 'KO', 3))).toBe(3);
+    expect(cashEffect(tx.buy('2024-01-02', 'A', 2, 10, 1))).toBe(-21);
+    expect(cashEffect(tx.sell('2024-01-02', 'A', 2, 10, 1))).toBe(19);
   });
 });

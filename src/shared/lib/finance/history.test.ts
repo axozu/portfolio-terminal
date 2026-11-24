@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Candle } from '@/shared/model';
 import { createTxFactory } from '@/test/fixtures/transactions';
-import { computeValueHistory } from './history';
+import { benchmarkWithFlows, computeValueHistory } from './history';
 
 const candle = (date: string, close: number): Candle => ({
   date,
@@ -53,5 +53,36 @@ describe('computeValueHistory', () => {
 
   it('returns an empty history for no dates', () => {
     expect(computeValueHistory([], candles, [])).toEqual([]);
+  });
+});
+
+describe('benchmarkWithFlows', () => {
+  const point = (date: string, value: number, netFlow = 0) => ({
+    date,
+    value,
+    netFlow,
+    cash: 0,
+    netInvested: 0,
+  });
+
+  it('invests the starting value and every later flow into the benchmark', () => {
+    const closes = new Map([
+      ['d1', 100],
+      ['d2', 110],
+      ['d3', 100],
+    ]);
+    const points = [point('d1', 1_000, 1_000), point('d2', 0), point('d3', 0, 500)];
+    // d1: 10 ед. → 1000; d2: 10 × 110 = 1100; d3: +5 ед. → 15 × 100 = 1500
+    expect(benchmarkWithFlows(points, closes)).toEqual([1_000, 1_100, 1_500]);
+  });
+
+  it('handles withdrawals and missing closes', () => {
+    const closes = new Map([
+      ['d1', 50],
+      ['d3', 100],
+    ]);
+    const points = [point('d1', 1_000), point('d2', 0, -500), point('d3', 0)];
+    // d1: 20 ед.; d2: цена 50 (перенос), −10 ед. → 500; d3: 10 × 100 = 1000
+    expect(benchmarkWithFlows(points, closes)).toEqual([1_000, 500, 1_000]);
   });
 });

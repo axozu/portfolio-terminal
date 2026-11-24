@@ -71,3 +71,23 @@ export function computeValueHistory(
 
   return points;
 }
+
+/**
+ * Стоимость гипотетического портфеля, который получал бы те же деньги, но вкладывал их в бенчмарк.
+ * В первой точке весь капитал V₀ «покупает» бенчмарк по B₀, затем каждый поток F_t
+ * покупает (или продаёт) F_t / B_t единиц. Так сравнение честное: оба портфеля получают
+ * одинаковые пополнения в одни и те же дни. Без цены бенчмарка на дату берётся последняя известная.
+ */
+export function benchmarkWithFlows(
+  points: readonly ValuePoint[],
+  benchmarkCloses: ReadonlyMap<IsoDate, number>,
+): number[] {
+  let units = 0;
+  let lastClose: number | undefined;
+  return points.map((point, i) => {
+    lastClose = benchmarkCloses.get(point.date) ?? lastClose;
+    if (lastClose === undefined || lastClose <= 0) return point.value;
+    units += (i === 0 ? point.value : point.netFlow) / lastClose;
+    return units * lastClose;
+  });
+}

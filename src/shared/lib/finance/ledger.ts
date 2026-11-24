@@ -190,3 +190,18 @@ export function validateLedger(transactions: readonly Transaction[]): LedgerViol
 export function openHoldings(state: LedgerState): Holding[] {
   return [...state.holdings.values()].filter((h) => h.quantity > QUANTITY_EPSILON);
 }
+
+/** Влияние сделки на кэш, USD, со знаком: пополнение +, покупка −. */
+export function cashEffect(tx: Transaction): number {
+  switch (tx.type) {
+    case 'deposit':
+    case 'dividend':
+      return tx.amount;
+    case 'withdrawal':
+      return -tx.amount;
+    case 'buy':
+      return -(tx.quantity * tx.price + tx.fee);
+    case 'sell':
+      return tx.quantity * tx.price - tx.fee;
+  }
+}
