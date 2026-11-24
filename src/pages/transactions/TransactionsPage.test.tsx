@@ -92,6 +92,6 @@ describe('TransactionsPage', () => {
     if (!firstRow) throw new Error('no rows');
     await user.click(within(firstRow).getByRole('button', { name: /^Edit transaction from/ }));
     expect(await screen.findByRole('dialog', { name: 'Edit transaction' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Save changes' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Save changes' })).toBeInTheDocument();
   });
 });

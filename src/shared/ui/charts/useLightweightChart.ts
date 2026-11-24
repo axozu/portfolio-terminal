@@ -33,6 +33,9 @@ export function useLightweightChart(
         textColor: theme.axis,
         fontFamily: theme.fontFamily,
         fontSize: 11,
+        // Атрибуция TradingView — ссылкой в подвале (так разрешает лицензия и ТЗ). Встроенный
+        // логотип — ссылка внутри графика с role="img", что ломает доступность.
+        attributionLogo: false,
       },
       grid: {
         vertLines: { visible: false },

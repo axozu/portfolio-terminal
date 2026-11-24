@@ -292,6 +292,21 @@ export const en = {
       empty: 'No dividends yet.',
     },
   },
+  shortcuts: {
+    title: 'Keyboard shortcuts',
+    description: 'Shortcuts work anywhere except while typing in a field.',
+    newTransaction: 'New transaction',
+    search: 'Search in the current table',
+    help: 'Show this list',
+    close: 'Close',
+    open: 'Keyboard shortcuts',
+  },
+  chaos: {
+    label: 'Simulate API errors',
+    hint: 'About 15% of data requests fail with an error, to show retries and error states.',
+    enabled: 'API error simulation is on',
+    disabled: 'API error simulation is off',
+  },
   assetClass: {
     stock: 'Stocks',
     etf: 'ETFs',

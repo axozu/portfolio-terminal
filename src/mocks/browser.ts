@@ -2,7 +2,8 @@ import { setupWorker } from 'msw/browser';
 import { toIsoDate } from '@/shared/lib/date';
 import { MockDb } from './db';
 import { createHandlers } from './handlers';
-import { browserNetworkSettings, syncChaosFromUrl } from './network';
+import { syncChaosFromUrl } from './chaosFlag';
+import { browserNetworkSettings } from './network';
 
 function safeLocalStorage(): Storage | null {
   try {

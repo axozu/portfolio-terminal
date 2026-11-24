@@ -1,7 +1,23 @@
+import { lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUiStore } from '@/shared/store/ui';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/shared/ui/sheet';
-import { TransactionForm } from './TransactionForm';
+import { Skeleton } from '@/shared/ui/skeleton';
+
+/** Форма (Zod, react-hook-form, поиск активов) грузится отдельным чанком при первом открытии. */
+const TransactionForm = lazy(() =>
+  import('./TransactionForm').then((m) => ({ default: m.TransactionForm })),
+);
+
+function FormSkeleton() {
+  return (
+    <div className="grid gap-4 p-4">
+      {Array.from({ length: 6 }, (_, i) => (
+        <Skeleton key={i} className="h-9 w-full" />
+      ))}
+    </div>
+  );
+}
 
 /**
  * Форма сделки в боковой панели (на телефоне — на весь экран). Открывается из любого места
@@ -29,16 +45,18 @@ export function TransactionFormSheet() {
           <SheetDescription>{t('transactionForm.description')}</SheetDescription>
         </SheetHeader>
         {state.open ? (
-          <TransactionForm
-            // Новый экземпляр формы на каждое открытие — значения не «протекают» между сделками.
-            key={
-              state.mode === 'edit'
-                ? state.transaction.id
-                : `new-${state.prefill.type ?? ''}-${state.prefill.ticker ?? ''}`
-            }
-            state={state}
-            onClose={close}
-          />
+          <Suspense fallback={<FormSkeleton />}>
+            <TransactionForm
+              // Новый экземпляр формы на каждое открытие — значения не «протекают» между сделками.
+              key={
+                state.mode === 'edit'
+                  ? state.transaction.id
+                  : `new-${state.prefill.type ?? ''}-${state.prefill.ticker ?? ''}`
+              }
+              state={state}
+              onClose={close}
+            />
+          </Suspense>
         ) : null}
       </SheetContent>
     </Sheet>

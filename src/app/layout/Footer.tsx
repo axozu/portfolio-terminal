@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { ChaosToggle } from '@/features/chaos-mode';
 import { ResetDemoButton } from '@/features/demo-reset';
 import { LINKS } from '@/shared/config/links';
 
@@ -26,7 +27,8 @@ export function Footer() {
           TradingView
         </a>
       </span>
-      <div className="ml-auto">
+      <div className="ml-auto flex flex-wrap items-center gap-4">
+        <ChaosToggle />
         <ResetDemoButton />
       </div>
     </footer>

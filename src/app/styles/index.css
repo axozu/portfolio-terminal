@@ -122,12 +122,12 @@
   }
   @keyframes flash-gain {
     from {
-      background-color: color-mix(in oklab, var(--gain) 28%, transparent);
+      background-color: color-mix(in oklab, var(--gain) 20%, transparent);
     }
   }
   @keyframes flash-loss {
     from {
-      background-color: color-mix(in oklab, var(--loss) 28%, transparent);
+      background-color: color-mix(in oklab, var(--loss) 20%, transparent);
     }
   }
 }

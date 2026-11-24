@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { Hotkeys } from '@/features/hotkeys';
 import { PriceFeedRunner } from '@/features/price-feed';
 import { TransactionFormSheet } from '@/features/transaction-form';
 import { useUiStore } from '@/shared/store/ui';
@@ -43,6 +44,7 @@ export function AppLayout() {
       <BottomNav />
       <TransactionFormSheet />
       <PriceFeedRunner />
+      <Hotkeys />
     </div>
   );
 }

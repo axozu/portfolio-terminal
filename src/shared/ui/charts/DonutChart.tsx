@@ -45,7 +45,8 @@ export function DonutChart({ slices, centerLabel, centerValue, ariaLabel }: Donu
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center xl:flex-col xl:items-stretch 2xl:flex-row 2xl:items-center">
       <div className="relative mx-auto aspect-square w-44 shrink-0" aria-hidden="true">
         <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
+          {/* SVG скрыт от скринридеров и клавиатуры: те же данные есть в таблице-легенде. */}
+          <PieChart accessibilityLayer={false} tabIndex={-1}>
             <Pie
               data={slices.map((slice) => ({
                 ...slice,
@@ -60,6 +61,7 @@ export function DonutChart({ slices, centerLabel, centerValue, ariaLabel }: Donu
               endAngle={-270}
               stroke="var(--card)"
               strokeWidth={2}
+              rootTabIndex={-1}
               isAnimationActive={false}
               onMouseEnter={(_, index) => {
                 setActiveKey(slices[index]?.key ?? null);

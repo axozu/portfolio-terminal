@@ -6,8 +6,14 @@ import { useUiStore } from '@/shared/store/ui';
 import { setupTestApi, TEST_TODAY } from '@/test/mockApi';
 import { renderApp } from '@/test/renderApp';
 
+// Прогрев ленивых чанков (форма, страница обзора, графики): холодная загрузка в параллельном прогоне медленная.
 beforeAll(async () => {
-  await import('@/features/transaction-form/ui/TransactionForm');
+  await Promise.all([
+    import('@/features/transaction-form/ui/TransactionForm'),
+    import('@/pages/overview'),
+    import('@/shared/ui/charts/DonutChart'),
+    import('@/shared/ui/charts/TimeSeriesChart'),
+  ]);
 });
 
 afterEach(async () => {
@@ -24,6 +30,8 @@ async function openForm(
   await screen.findAllByText('Total return');
   useUiStore.getState().openCreateForm(prefill);
   const dialog = await screen.findByRole('dialog', { name: 'New transaction' });
+  // Форма — ленивый чанк: ждём, пока она отрисуется в панели.
+  await within(dialog).findByRole('button', { name: 'Add transaction' });
   return { user, db, dialog };
 }
 

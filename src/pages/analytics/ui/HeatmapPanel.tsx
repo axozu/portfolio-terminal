@@ -10,7 +10,8 @@ import { buildHeatmap, heatIntensity } from '../model/heatmap';
 function cellStyle(value: number) {
   const trend = trendOf(value, 0.0005);
   if (trend === 'flat') return undefined;
-  const share = Math.round(10 + heatIntensity(value) * 45);
+  // Не больше 38%: светлый текст на самой яркой ячейке сохраняет контраст WCAG AA.
+  const share = Math.round(8 + heatIntensity(value) * 30);
   const color = trend === 'up' ? 'var(--gain)' : 'var(--loss)';
   return { backgroundColor: `color-mix(in oklab, ${color} ${String(share)}%, transparent)` };
 }
@@ -32,7 +33,7 @@ export function HeatmapPanel({ monthly }: { monthly: readonly MonthlyReturn[] })
       actions={
         <span className="flex items-center gap-2 text-xs text-muted-foreground" aria-hidden="true">
           {t('analytics.heatmap.legendDown')}
-          <span className="h-2 w-24 rounded-[1px] bg-[linear-gradient(90deg,color-mix(in_oklab,var(--loss)_55%,transparent),transparent,color-mix(in_oklab,var(--gain)_55%,transparent))]" />
+          <span className="h-2 w-24 rounded-[1px] bg-[linear-gradient(90deg,color-mix(in_oklab,var(--loss)_38%,transparent),transparent,color-mix(in_oklab,var(--gain)_38%,transparent))]" />
           {t('analytics.heatmap.legendUp')}
         </span>
       }
