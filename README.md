@@ -4,7 +4,7 @@
 
 An investment portfolio dashboard in a dark "trader terminal" style. It runs entirely in the browser on deterministic demo data: no sign-up, no API keys, nothing that can go down.
 
-**Live demo:** https://portfolio-terminal.vercel.app
+**Live demo:** https://portfolio-terminal-df33.vercel.app
 
 ![Overview](docs/screenshots/overview.png)
 
